@@ -1,0 +1,117 @@
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import {
+  GridHeaderFilterMenuContainer,
+  useGridApiContext,
+  GridFilterItem,
+  GridColDef,
+} from '@mui/x-data-grid-pro';
+import { TextField } from '@mui/material';
+
+function DateHeaderFilter(props: { field: string; item: GridFilterItem }) {
+  const { field, item } = props;
+  const apiRef = useGridApiContext();
+
+  const handleChange = (newValue: Date | null) => {
+    apiRef.current.upsertFilterItem({
+      ...item,
+      value: newValue ? newValue.toISOString() : null,
+    });
+  };
+
+  return (
+    <GridHeaderFilterMenuContainer
+      operators={apiRef.current
+        .getColumn(field)
+        .filterOperators!}  // keeps the operator flyout
+      item={item}
+      field={field}
+    >
+      <DatePicker
+        value={item.value ? new Date(item.value) : null}
+        onChange={handleChange}
+        slotProps={{
+          textField: {
+            size: "small",
+            fullWidth: true,
+          },
+        }}
+      />
+    </GridHeaderFilterMenuContainer>
+  );
+}
+
+// --------------------------------------------------------------------------------------------
+
+function DateHeaderFilter(props: { field: string; item: GridFilterItem }) {
+  const { field, item } = props;
+  const apiRef = useGridApiContext();
+
+  const handleChange = (newValue: Date | null) => {
+    apiRef.current.upsertFilterItem({
+      ...item,
+      value: newValue ? newValue.toISOString() : null,
+    });
+  };
+
+  return (
+    <GridHeaderFilterMenuContainer
+      operators={apiRef.current.getColumn(field).filterOperators!}
+      item={item}
+      field={field}
+    >
+      <DatePicker
+        value={item.value ? new Date(item.value) : null}
+        onChange={handleChange}
+        slotProps={{
+          textField: {
+            size: "small",
+            fullWidth: true,
+          },
+          popper: {
+            placement: "bottom-start", // <--- INLINE POPUP
+          },
+        }}
+      />
+    </GridHeaderFilterMenuContainer>
+  );
+}
+
+// --------------------------------------------------------------------------------------------
+
+import * as React from "react";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import {
+  GridApiContext,
+  GridHeaderFilterCellProps,
+  GridFilterItem,
+} from "@mui/x-data-grid-pro";
+import dayjs from "dayjs";
+
+export function DateHeaderFilter(props: GridHeaderFilterCellProps) {
+  const { item, applyValue, colDef } = props;
+  const apiRef = React.useContext(GridApiContext);
+
+  const handleChange = (value: dayjs.Dayjs | null) => {
+    applyValue({
+      ...item,
+      value: value ? value.toISOString() : null,
+    });
+
+    // Notify grid the filter changed
+    apiRef.current.applyHeaderFiltering();
+  };
+
+  return (
+    <DatePicker
+      value={item.value ? dayjs(item.value) : null}
+      onChange={handleChange}
+      slotProps={{
+        textField: {
+          variant: "standard",
+          size: "small",
+          sx: { width: "100%" },
+        },
+      }}
+    />
+  );
+}
