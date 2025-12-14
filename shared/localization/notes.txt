@@ -1,0 +1,94 @@
+Structure
+```
+shared/localization/
+├── LocalizationProvider.tsx      ← single public provider
+├── extendThemeWithLocale.ts      ← MUI theme factory
+├── muiLocales.ts                 ← MUI locale mapping
+├── rtl.ts                        ← RTL utilities (optional)
+└── types.ts
+```
+
+Usage
+```
+<LocalizationProvider>
+  <App />
+</LocalizationProvider>
+```
+
+
+shared/localization/localeContext.ts
+```
+import { createContext, useContext } from "react";
+import { SupportedLanguage } from "./types";
+
+export type LocaleState = {
+  language: SupportedLanguage;
+};
+
+export const LocaleContext = createContext<LocaleState | null>(null);
+
+export function useLocaleContext() {
+  const ctx = useContext(LocaleContext);
+  if (!ctx) {
+    throw new Error("useLocaleContext must be used within LocalizationProvider");
+  }
+  return ctx;
+}
+```
+
+LocalizationProvider.tsx
+```
+import { LocaleContext } from "./localeContext";
+import { normalizeLanguage } from "./types";
+
+export function LocalizationProvider({ children }: Props) {
+  const { i18n } = useTranslation();
+  const language = normalizeLanguage(i18n.language);
+
+  const localizedTheme = useMemo(
+    () => extendThemeWithLocale(baseTheme, language),
+    [language]
+  );
+
+  return (
+    <LocaleContext.Provider value={{ language }}>
+      <ThemeProvider theme={localizedTheme}>
+        <MuiDateLocalizationProvider
+          dateAdapter={AdapterDayjs}
+          adapterLocale={language}
+        >
+          {children}
+        </MuiDateLocalizationProvider>
+      </ThemeProvider>
+    </LocaleContext.Provider>
+  );
+}
+```
+
+shared/localization/useLocalization.ts
+```
+import { useLocaleContext } from "./localeContext";
+import * as formatters from "./formatters";
+
+export function useLocalization() {
+  const { language } = useLocaleContext();
+
+  return {
+    language,
+
+    /* Dates */
+    formatDate: (date: Date | string | number, options?: Intl.DateTimeFormatOptions) =>
+      formatters.formatDate(date, language, options),
+
+    formatRelativeDate: (date: Date | string | number) =>
+      formatters.formatRelativeDate(date, language),
+
+    /* Numbers */
+    formatNumber: (value: number, options?: Intl.NumberFormatOptions) =>
+      formatters.formatNumber(value, language, options),
+
+    formatCurrency: (value: number, currency: string) =>
+      formatters.formatCurrency(value, language, currency),
+  };
+}
+```
