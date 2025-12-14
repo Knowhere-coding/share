@@ -13,6 +13,8 @@ export const supportedLanguages = [
   "uk",
 ] as const;
 
+export const DEFAULT_LANGUAGE: SupportedLanguage = "de";
+
 export type SupportedLanguage = typeof supportedLanguages[number];
 
 export function normalizeLanguage(language: string): SupportedLanguage {
@@ -21,3 +23,4 @@ export function normalizeLanguage(language: string): SupportedLanguage {
     ? (base as SupportedLanguage)
     : "de"; // Fallback deutsch
 }
+
