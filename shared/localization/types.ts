@@ -21,6 +21,7 @@ export function normalizeLanguage(language: string): SupportedLanguage {
   const base = language.split("-")[0];
   return supportedLanguages.includes(base as SupportedLanguage)
     ? (base as SupportedLanguage)
-    : "de"; // Fallback deutsch
+    : DEFAULT_LANGUAGE; // Fallback deutsch
 }
+
 
