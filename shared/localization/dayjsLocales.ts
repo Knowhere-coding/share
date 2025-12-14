@@ -11,6 +11,8 @@ import "dayjs/locale/ru";
 import "dayjs/locale/sv";
 import "dayjs/locale/tr";
 import "dayjs/locale/uk";
+import { DEFAULT_DAYJS_LOCALE } from "./types";
 
-dayjs.locale("de") // DayJs Standard-Locale ueberschreiben
+dayjs.locale(DEFAULT_DAYJS_LOCALE) // dayjs Standard-Locale ueberschreiben
+
 
