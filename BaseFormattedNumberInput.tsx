@@ -12,6 +12,13 @@ export interface BaseFormattedNumberInputProps extends Omit<TextFieldProps, 'val
 export default function BaseFormattedNumberInput({
   value,
   onChange,
+  label,
+  placeholder,
+  helperText,
+  error,
+  disabled,
+  size,
+  variant,
   allowDecimal = false,
   format = (v) => v?.toString() ?? '',
   parse = (v) => v.replace(/,/g, ''),
@@ -42,6 +49,13 @@ export default function BaseFormattedNumberInput({
       {...props}
       value={internalValue}
       onChange={handleChange}
+      label={label}
+      placeholder={placeholder}
+      helperText={helperText}
+      error={error}
+      disabled={disabled}
+      size={size}
+      variant={variant}
       inputMode={allowDecimal ? 'decimal' : 'numeric'}
       slotProps={{
         htmlInput: {
