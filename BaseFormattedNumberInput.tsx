@@ -1,5 +1,5 @@
 import { TextField, TextFieldProps } from '@mui/material';
-import React, { useState } from 'react';
+import { useState, ChangeEvent, FormEvent } from 'react';
 
 export interface BaseFormattedNumberInputProps extends Omit<TextFieldProps, 'value' | 'onChange'> {
   value: string | number;
@@ -9,23 +9,23 @@ export interface BaseFormattedNumberInputProps extends Omit<TextFieldProps, 'val
   parse?: (displayValue: string) => any;
 }
 
-export const BaseFormattedNumberInput: React.FC<BaseFormattedNumberInputProps> = ({
+export default function BaseFormattedNumberInput({
   value,
   onChange,
   allowDecimal = false,
   format = (v) => v?.toString() ?? '',
   parse = (v) => v.replace(/,/g, ''),
   ...props
-}) => {
+}: BaseFormattedNumberInputProps) {
   const [internalValue, setInternalValue] = useState(format(value));
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const rawValue = parse(e.target.value);
     setInternalValue(format(rawValue));
     onChange(rawValue);
   };
 
-  const handleBeforeInput = (e: React.FormEvent<HTMLInputElement>) => {
+  const handleBeforeInput = (e: FormEvent<HTMLInputElement>) => {
     const input = (e.nativeEvent as InputEvent).data ?? '';
     const current = (e.target as HTMLInputElement).value;
 
