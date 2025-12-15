@@ -6,12 +6,12 @@ interface RHFFormattedNumberInputProps extends Omit<BaseFormattedNumberInputProp
   rules?: any;
 }
 
-export const RHFFormattedNumberInput: React.FC<RHFFormattedNumberInputProps> = ({
+export default function RHFFormattedNumberInput({
   name,
   control,
   rules,
   ...props
-}) => {
+}: RHFFormattedNumberInputProps) {
   return (
     <Controller
       name={name}
