@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { TextField, TextFieldProps } from '@mui/material';
 
 export interface BaseFormattedTextFieldProps extends Omit<TextFieldProps, 'value' | 'onChange'> {
@@ -8,25 +8,29 @@ export interface BaseFormattedTextFieldProps extends Omit<TextFieldProps, 'value
   parse?: (displayValue: string) => string;
 }
 
-export const BaseFormattedTextField: React.FC<BaseFormattedTextFieldProps> = ({
+export default function BaseFormattedTextField({
   value,
   onChange,
   format = (v) => v,
   parse = (v) => v,
   ...props
-}) => {
+}: BaseFormattedTextFieldProps) {
   const [internalValue, setInternalValue] = useState(format(value));
 
-  // Keep internal value in sync if parent changes it
+  // internen Wert in sync halten, wenn Eltern-Element den Wert aendert
   useEffect(() => {
     setInternalValue(format(value));
   }, [value, format]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const rawValue = parse(e.target.value);
     setInternalValue(format(rawValue));
     onChange(rawValue);
   };
 
-  return <TextField {...props} value={internalValue} onChange={handleChange} />;
+  return <TextField 
+           {...props} 
+           value={internalValue} 
+           onChange={handleChange}
+         />;
 };
