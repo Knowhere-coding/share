@@ -1,0 +1,56 @@
+/* Usage:
+ * <RHFFormattedNumberField
+ *   name="amount"
+ *   control={control}
+ *   label="Amount"
+ *   format={(v) =>
+ *     v != null ? Number(v).toLocaleString('en-US') : ''
+ *   }
+ *   parse={(v) => v.replace(/,/g, '')}
+ * />
+*/
+
+type RHFFormattedNumberFieldProps = {
+  name: string;
+  control: Control<any>;
+  label?: string;
+  rules?: any;
+  format?: (value: string | number) => string;
+  parse?: (displayValue: string) => any;
+} & Omit<TextFieldProps, 'name' | 'control'>;
+
+function RHFFormattedNumberField({
+  name,
+  control,
+  label,
+  rules,
+  format = (v) => v?.toString() ?? '',
+  parse = (v) => v.replace(/,/g, ''), // default: remove commas
+  ...props
+}: RHFFormattedNumberFieldProps) {
+  return (
+    <Controller
+      name={name}
+      control={control}
+      rules={rules}
+      render={({ field, fieldState }) => {
+        const displayValue = format(field.value);
+
+        return (
+          <TextField
+            {...field}
+            {...props}
+            label={label}
+            value={displayValue}
+            onChange={(e) => {
+              const rawValue = parse(e.target.value);
+              field.onChange(rawValue);
+            }}
+            error={!!fieldState.error}
+            helperText={fieldState.error?.message}
+          />
+        );
+      }}
+    />
+  );
+}
