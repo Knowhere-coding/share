@@ -13,7 +13,13 @@ export default function BaseFormattedTextField({
   onChange,
   format = (v) => v,
   parse = (v) => v,
-  ...props
+  label,
+  placeholder,
+  helperText,
+  error,
+  disabled,
+  size,
+  variant,
 }: BaseFormattedTextFieldProps) {
   const [internalValue, setInternalValue] = useState(format(value));
 
@@ -29,8 +35,14 @@ export default function BaseFormattedTextField({
   };
 
   return <TextField 
-           {...props} 
            value={internalValue} 
            onChange={handleChange}
+           label={label}
+           placeholder={placeholder}
+           helperText={helperText}
+           error={error}
+           disabled={disabled}
+           size={size}
+           variant={variant}
          />;
 };
