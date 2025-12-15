@@ -6,12 +6,12 @@ interface RHFFormattedTextFieldProps extends Omit<BaseFormattedTextFieldProps, '
   rules?: any;
 }
 
-export const RHFFormattedTextField: React.FC<RHFFormattedTextFieldProps> = ({
+export default function RHFFormattedTextField({
   name,
   control,
   rules,
   ...props
-}) => {
+}: RHFFormattedTextFieldProps) {
   return (
     <Controller
       name={name}
