@@ -1,0 +1,13 @@
+export interface BaseFormattedTextFieldProps {
+  value: string;
+  onChange: (value: string) => void;
+  label?: string;
+  placeholder?: string;
+  helperText?: string;
+  error?: boolean;
+  disabled?: boolean;
+  size?: TextFieldProps['size'];
+  variant?: TextFieldProps['variant'];
+  format?: (value: string) => string;
+  parse?: (displayValue: string) => string;
+}
