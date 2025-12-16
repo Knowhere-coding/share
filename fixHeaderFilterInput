@@ -1,0 +1,7 @@
+// CustomHeaderFilter.tsx
+const [value, setValue] = useState(item.value ?? '');
+useEffect(() => setValue(item.value ?? ''), [item.value]);
+
+const handleChange = (e) => setValue(e.target.value);
+const handleBlur = () => applyValue({ ...item, value });
+const handleKeyDown = (e) => { if(e.key==='Enter') applyValue({ ...item, value }); };
