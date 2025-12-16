@@ -1,0 +1,61 @@
+import * as React from "react";
+import TextField, { TextFieldProps } from "@mui/material/TextField";
+import { NumericFormat } from "react-number-format";
+
+export type BaseNumberInputProps = {
+  value: number | null;
+  onChange: (value: number | null) => void;
+
+  label?: string;
+  locale?: string;
+
+  /** Allow decimals or force integers only */
+  allowDecimals?: boolean;
+
+  /** Number of decimal places when decimals are allowed */
+  decimalScale?: number;
+
+  /** Disallow negative numbers by default */
+  allowNegative?: boolean;
+
+  /** Forwarded to TextField */
+  textFieldProps?: Omit<TextFieldProps, "value" | "onChange" | "type" | "label">;
+};
+
+export function BaseNumberInput({
+  value,
+  onChange,
+  label,
+  locale = "en-US",
+  allowDecimals = true,
+  decimalScale = 2,
+  allowNegative = false,
+  textFieldProps,
+}: BaseNumberInputProps) {
+  // Extract locale-specific separators
+  const parts = new Intl.NumberFormat(locale).formatToParts(12345.6);
+  const thousandSeparator =
+    parts.find((p) => p.type === "group")?.value ?? ",";
+  const decimalSeparator =
+    parts.find((p) => p.type === "decimal")?.value ?? ".";
+
+  return (
+    <NumericFormat
+      value={value}
+      customInput={TextField}
+      label={label} // pass label directly from BaseNumberInput
+      fullWidth
+      allowNegative={allowNegative}
+      thousandSeparator={thousandSeparator}
+      decimalSeparator={decimalSeparator}
+      allowedDecimalSeparators={[",", "."]}
+      inputMode={allowDecimals ? "decimal" : "numeric"}
+      decimalScale={allowDecimals ? decimalScale : 0}
+      fixedDecimalScale={false}
+      onValueChange={(values) => {
+        onChange(values.floatValue ?? null);
+      }}
+      {...textFieldProps} // forward the rest of the props to TextField
+    />
+  );
+}
