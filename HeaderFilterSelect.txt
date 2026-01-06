@@ -1,0 +1,49 @@
+import {useCallback} from 'react';
+import {useTranslation} from 'react-i18next';
+import {FormControl, SelectChangeEvent, MenuItem} from '@mui/material';
+import {Select} from '@company/mcd-module-theme-provider';
+import {useGridApiContext, GridHeaderFilterCellProps} from '@mui/x-data-grid-pro';
+
+export interface HeaderFilterSelectProps {
+    params: GridHeaderFilterCellProps;
+    options: { value: string, labelKey: string }[];
+    defaultValue: string;
+}
+
+export default function HeaderFilterSelect({params, options, defaultValue}: HeaderFilterSelectProps) {
+    const {t} = useTranslation();
+    const apiRef = useGridApiContext();
+
+    const {item} = params;
+
+    const handleChange = useCallback((event: SelectChangeEvent) => {
+        if (!event.target.value) {
+            apiRef.current.deleteFilterItem(item);
+            return;
+        }
+
+        apiRef.current.upsertFilterItem({
+            ...item,
+            operator: 'is',
+            value: event.target.value,
+        });
+    }, [apiRef.current]);
+
+    const value = (item.value ?? defaultValue) as string;
+
+    return (
+        <FormControl variant="outlined" size="small" fullWidth>
+            <Select
+                value={value}
+                defaultValue={defaultValue}
+                onChange={handleChange}
+            >
+                {options.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                        {t(option.labelKey)}
+                    </MenuItem>
+                ))}
+            </Select>
+        </FormControl>
+    );
+}

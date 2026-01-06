@@ -1,0 +1,50 @@
+import {GridHeaderFilterCellProps} from '@mui/x-data-grid-pro';
+import {Box, TextField} from '@mui/material';
+import {FocusEvent, KeyboardEvent, useMemo} from 'react';
+import {useLocale} from '@company/cpl-module-reactlib';
+import {DEFAULT_LANGUAGE_BCP, getNumberSeparator} from '../../shared/localization/types';
+import HeaderFilterOperatorMenu from './HeaderFilterOperatorMenu';
+import {NumericFormat} from 'react-number-format';
+import {useHeaderFilter} from './useHeaderFilter';
+
+export interface HeaderFilterNumericInputProps {
+    headerFilter: HeaderFilter;
+    type: 'number' | 'currency';
+}
+
+export default function HeaderFilterNumericInput({
+                                                     headerFilter,
+                                                     type = 'number',
+                                                 }: HeaderFilterNumericInputProps) {
+    const localeSource = useLocale();
+    const locale = useMemo(() => localeSource?.toBcpString() ?? DEFAULT_LANGUAGE_BCP, [localeSource]);
+    const {thousandSeparator, decimalSeparator} = getNumberSeparator(locale);
+    const allowDecimal = type === 'currency';
+
+    return (
+        <NumericFormat
+            placeholder={allowDecimal ? `0${decimalSeparator}00` : `0`}
+            className="partOfColumnheader"
+            allowNegative={type === 'currency'}
+            thousandSeparator={thousandSeparator}
+            decimalSeparator={decimalSeparator}
+            allowedDecimalSeparators={[',', '.']}
+            inputMode={allowDecimal ? 'decimal' : 'numeric'}
+            decimalScale={allowDecimal ? 2 : 0}
+            fixedDecimalScale={true}
+            onValueChange={(values) => {
+                headerFilter.setValue(String(values.floatValue ?? ''));
+            }}
+            customInput={TextField}
+            type="text"
+            value={headerFilter.value}
+            onBlur={headerFilter.doFilter}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  headerFilter.doFilter();
+                }
+              }
+            }
+        />
+    );
+}

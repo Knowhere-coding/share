@@ -1,0 +1,35 @@
+import { GridHeaderFilterCellProps } from '@mui/x-data-grid-pro';
+import { Box } from '@mui/material';
+import HeaderFilterOperatorMenu from './HeaderFilterOperatorMenu';
+import HeaderFilterTextInput from './HeaderFilterTextInput';
+import HeaderFilterDatePicker from './HeaderFilterDatePicker';
+import { useHeaderFilter } from './useHeaderFilter';
+
+export default function HeaderFilterCell(params: GridHeaderFilterCellProps) {
+    const { item, colDef } = params;
+    const headerFilter = useHeaderFilter(item);
+
+    const renderInput = () => {
+        switch (colDef.type) {
+            case 'date':
+            case 'dateTime':
+                return <HeaderFilterDatePicker headerFilter={headerFilter} colDef={colDef} />;
+
+            case 'number':
+                return <HeaderFilterNumericInput headerFilter={headerFilter} type={colDef.filterInputMode ?? 'number'} />;
+
+            default:
+                return <HeaderFilterTextInput headerFilter={headerFilter} />;
+        }
+    };
+
+    return (
+        <Box className="ColumnHeader--filter_FlexBox">
+            {renderInput()}
+            <HeaderFilterOperatorMenu
+                headerFilter={headerFilter}
+                colDef={colDef}
+            />
+        </Box>
+    );
+}

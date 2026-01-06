@@ -1,0 +1,29 @@
+import {TextField} from '@mui/material';
+import {KeyboardEvent} from 'react';
+import {HeaderFilter} from './useHeaderFilter';
+import {useTranslation} from 'react-i18next';
+
+export interface HeaderFilterTextInputProps {
+    headerFilter: HeaderFilter;
+}
+
+export default function HeaderFilterTextInput({ headerFilter }: HeaderFilterTextInputProps) {
+    const {t} = useTranslation();
+
+    return (
+        <TextField
+            value={headerFilter.value}
+            className="partOfColumnheader"
+            onChange={(e) => headerFilter.setValue(e.target.value)}
+            onBlur={headerFilter.doFilter}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  headerFilter.doFilter();
+                }
+              }
+            }
+            placeholder={t('umsatzliste.grid.header.filter.input.label')}
+            fullWidth
+        />
+    );
+}

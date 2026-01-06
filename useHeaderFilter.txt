@@ -1,0 +1,90 @@
+import {GridFilterItem, useGridApiContext} from '@mui/x-data-grid-pro';
+import {useCallback, useState} from 'react';
+
+/**
+ * Interface für den Header-Filterzustand.
+ */
+export interface HeaderFilter {
+  /** Der aktuelle Eingabewert des Filters */
+  value: string;
+
+  /** Funktion zum Setzen des Filterwertes */
+  setValue: (value: string) => void;
+
+  /** Der aktuell ausgewaehlte Operator (z.B. "contains", "equals") */
+  operator: string;
+
+  /** Funktion zum Setzen des Operators */
+  setOperator: (operator: string) => void;
+
+  /**
+   * Wendet den aktuellen Filterwert an.
+   * 
+   * - Ignoriert den Filter, wenn der Wert leer ist.
+   * - Aktualisiert oder fuegt den Filter im Data Grid hinzu, wenn ein Wert gesetzt ist.
+   */
+  doFilter: () => void;
+
+  /** Gibt an, ob der Filter aktuell aktiv ist (d.h. angewendet wurde) */
+  isFiltered: boolean;
+}
+
+/**
+ * Custom React Hook zur Verwaltung eines Header-Filters fuer MUI Data Grid.
+ *
+ * @param item - Das GridFilterItem, das initialen Wert und Operator definiert.
+ * @returns Ein HeaderFilter-Objekt mit Zustand, Setter-Funktionen und Filter-Funktion.
+ *
+ * @example
+ * ```ts
+ * const filter = useHeaderFilter({ field: 'name', operator: 'contains', value: '' });
+ *
+ * // Filterwert aendern
+ * filter.setValue('1337');
+ *
+ * // Filter anwenden
+ * filter.doFilter();
+ *
+ * // Filter-Zustand pruefen
+ * if (filter.isFiltered) {
+ *   console.log('Filter aktiv');
+ * }
+ * ```
+ */
+export function useHeaderFilter(
+  item: GridFilterItem,
+): HeaderFilter {
+    const apiRef = useGridApiContext();
+    const [value, setValue] = useState<string>((item.value ?? '') as string);
+    const [appliedValue, setAppliedValue] = useState<string | null>(
+        item.value ? String(item.value) : null
+    );
+    const [operator, setOperator] = useState<string>(item.operator);
+
+    const doFilter = useCallback(() => {
+        const applyValue = value.trim();
+
+        if (!applyValue) {
+            apiRef.current.deleteFilterItem(item);
+            setAppliedValue(null);
+            return;
+        }
+
+        apiRef.current.upsertFilterItem({
+            ...item,
+            operator,
+            value: applyValue,
+        });
+
+        setAppliedValue(applyValue);
+    }, [value, operator, apiRef, item]);
+
+    return {
+        value,
+        setValue,
+        operator,
+        setOperator,
+        doFilter,
+        isFiltered: appliedValue !== null,
+    };
+}

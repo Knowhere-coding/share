@@ -1,0 +1,42 @@
+import {useGridApiContext} from '@mui/x-data-grid-pro';
+import {DatePicker} from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
+import {HeaderFilter} from './useHeaderFilter';
+import {useHeaderFilterColumnWidthOnFocus} from '../../../hooks/grid/useHeaderFilterColumnWidthOnFocus';
+
+export interface HeaderFilterDatePickerProps {
+    headerFilter: HeaderFilter;
+    colDef: GridColDef;
+}
+
+export default function HeaderFilterDatePicker({
+                                                     headerFilter,
+                                                     colDef,
+                                                 }: HeaderFilterDatePickerProps) {
+    const apiRef = useGridApiContext();
+    const {onFocus, onBlur} = useHeaderFilterColumnWidthOnFocus(apiRef, colDef, 200);
+    const handleChange = (value: dayjs.Dayjs | null) => {
+        headerFilter.setValue(value ? value.toISOString() : '');
+    };
+
+    return (
+        <DatePicker
+            value={headerFilter.value ? dayjs(headerFilter.value) : null}
+            onChange={handleChange}
+            slotProps={{
+                textField: {
+                    onFocus,
+                    onBlur: (e) => {
+                        onBlur(e); // TODO: checken ob das funzt oder der build abbricht
+                        headerFilter.doFilter();
+                    },
+                    onKeyDown: (e) => {
+                        if (e.key === 'Enter') {
+                          headerFilter.doFilter();
+                        }
+                    },
+                },
+            }}
+        />
+    );
+}

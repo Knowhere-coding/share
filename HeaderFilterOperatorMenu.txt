@@ -1,0 +1,73 @@
+import {Badge, IconButton, Menu, MenuItem, Tooltip} from '@mui/material';
+import {GridColDef, GridLocaleText, useGridApiContext} from '@mui/x-data-grid-pro';
+import {useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import {IcFilterS} from '@company/mcd-module-icons';
+import {HeaderFilter} from './useHeaderFilter';
+
+export interface HeaderFilterOperatorMenuProps {
+    headerFilter: HeaderFilter;
+    colDef: GridColDef;
+}
+
+export default function HeaderFilterOperatorMenu({
+                                                     headerFilter,
+                                                     colDef,
+                                                 }: HeaderFilterOperatorMenuProps) {
+    const {t} = useTranslation();
+    const apiRef = useGridApiContext();
+
+    const [anchorElement, setAnchorElement] = useState<HTMLElement | null>(null);
+
+    const operators = colDef.filterOperators ?? [];
+
+    const getOperatorLabel = (operatorValue: string): string => {
+        const pascalCase = operatorValue.charAt(0).toUpperCase() + operatorValue.slice(1);
+
+        return apiRef.current.getLocaleText(`headerFilterOperator${pascalCase}` as keyof GridLocaleText) as string;
+    };
+
+    const handleChange = (operator: string) => {
+        headerFilter.setOperator(operator);
+
+        if (headerFilter.isFiltered) {
+            headerFilter.doFilter();
+        }
+    };
+
+    return (
+        <>
+            <Tooltip title={t('umsatzliste.grid.header.filter.operatorMenu.label')}>
+                <IconButton
+                    size="small"
+                    className={`FilterIcon${anchorElement ? ' filterOpen' : ''}`}
+                    onClick={(e) => setAnchorElement(e.currentTarget)}
+                    aria-label={t('umsatzliste.grid.header.filter.operatorMenu.activeState')}
+                >
+                  <Badge color="secondary" variant="dot" invisible={!headerFilter.isFiltered}>
+                      <IcFilterS/>
+                  </Badge>
+              </IconButton>
+            </Tooltip>
+
+            <Menu
+                anchorEl={anchorElement}
+                open={Boolean(anchorElement)}
+                onClose={() => setAnchorElement(null)}
+            >
+                {operators.map((operator) => (
+                    <MenuItem
+                        key={operator.value}
+                        selected={operator.value === headerFilter.operator}
+                        onClick={() => {
+                            handleChange(operator.value);
+                            setAnchorElement(null);
+                        }}
+                    >
+                        {getOperatorLabel(operator.value)}
+                    </MenuItem>
+                ))}
+            </Menu>
+        </>
+    );
+}
