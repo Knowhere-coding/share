@@ -9,7 +9,7 @@
  *   - ttlMs: Time-to-Live fuer Cache-Eintraege in Millisekunden (Standard ist 5 Minuten).
  *   - capacity: Maximale Anzahl von Eintraegen, die im Cache gespeichert werden koennen (Standard ist 100).
  *
- * @returns {Cache<K, V>} Ein Objekt mit den Methoden `get`, `set`, `clear`, um mit dem Cache zu interagieren.
+ * @returns {Cache<K, V>} Ein Objekt mit den Methoden `get`, `set` und `clear`, um mit dem Cache zu interagieren.
  *   - `get(key: K): V | undefined`: Ruft den zwischengespeicherten Wert für den angegebenen Schlüssel ab. Wenn der Eintrag nicht existiert oder abgelaufen ist, wird `undefined` zurückgegeben.
  *   - `set(key: K, value: V): void`: Speichert den angegebenen Wert im Cache mit dem angegebenen Schlüssel.
  *   - `clear(): void`: Loescht alle Eintraege im Cache.

@@ -19,7 +19,7 @@ type CacheEntry<V> = {
 /**
  * Custom hook for managing in-memory cache with TTL (time-to-live) and capacity management.
  *
- * Provides `get`, `set` and clear methods to retrieve, save or clear values of the cache. Supports automatic eviction of expired 
+ * Provides `get`, `set` and clear methods to retrieve from, store or clear values in the cache. Supports automatic eviction of expired 
  * entries and capacity-based eviction (least recently expired) when the cache exceeds its limit.
  *
  * @param {UseCacheConfig} config - Optional configuration to customize TTL and cache capacity.

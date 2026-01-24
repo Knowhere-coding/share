@@ -18,7 +18,7 @@ A custom hook that provides in-memory caching with automatic expiration and capa
 - An object with three methods:
     - `get(key: K): V | undefined`: Retrieves the cached value for the provided key. If the entry does not exist or has expired, it returns `undefined`.
     - `set(key: K, value: V): void`: Stores the given value in the cache with the specified key.
-    - `clear(): void`: Deletes all entries of the cache.
+    - `clear(): void`: Deletes all entries in the cache.
 
 ## Example Usage:
 
@@ -38,7 +38,7 @@ const MyComponent = () => {
         console.log(cachedValue); // Output: 'value'
     }
 
-    // Werte aus dem Cache löschen
+    // Delete all entries in the cache
     cache.clear();
     cachedValue = cache.get('key');
     console.log(Boolean(cachedValue)); // Output: false
