@@ -10,14 +10,15 @@ A custom hook that provides in-memory caching with automatic expiration and capa
 ## Parameters:
 
 - `config` (optional): Configuration for the cache behavior.
-  - `ttlMs` (optional, default: `300000` (5 minutes)): The time-to-live (TTL) for cached entries, in milliseconds. After this time, the entry will expire.
-  - `capacity` (optional, default: `100`): The maximum number of entries to store in the cache. When the limit is exceeded, the least recently expired item is evicted.
+    - `ttlMs` (optional, default: `300000` (5 minutes)): The time-to-live (TTL) for cached entries, in milliseconds. After this time, the entry will expire.
+    - `capacity` (optional, default: `100`): The maximum number of entries to store in the cache. When the limit is exceeded, the least recently expired item is evicted.
 
 ## Returns:
 
-- An object with two methods:
-  - `get(key: K): V | undefined`: Retrieves the cached value for the provided key. If the entry does not exist or has expired, it returns `undefined`.
-  - `set(key: K, value: V): void`: Stores the given value in the cache with the specified key.
+- An object with three methods:
+    - `get(key: K): V | undefined`: Retrieves the cached value for the provided key. If the entry does not exist or has expired, it returns `undefined`.
+    - `set(key: K, value: V): void`: Stores the given value in the cache with the specified key.
+    - `clear(): void`: Deletes all entries of the cache.
 
 ## Example Usage:
 
@@ -29,13 +30,18 @@ const MyComponent = () => {
     });
 
     // Store value in the cache
-    cache.set('myKey', 'some value');
+    cache.set('key', 'value');
 
     // Retrieve value from the cache
-    const cachedValue = cache.get('myKey');
+    let cachedValue = cache.get('key');
     if (cachedValue) {
-        console.log(cachedValue); // Output: 'some value'
+        console.log(cachedValue); // Output: 'value'
     }
+
+    // Werte aus dem Cache löschen
+    cache.clear();
+    cachedValue = cache.get('key');
+    console.log(Boolean(cachedValue)); // Output: false
 };
 ```
 

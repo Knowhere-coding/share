@@ -1,17 +1,28 @@
-```tsx
+````tsx
 /**
  * Benutzerdefinierter Hook zur Verwaltung von Caching im Arbeitsspeicher mit TTL (Time-to-Live) und Kapazitaetsmanagement.
  *
- * Bietet die Methoden `get` und `set`, um Werte im Cache zu speichern. Unterstuetzt das automatische Entfernen abgelaufener
+ * Bietet die Methoden `get`, `set` und `clear`, um Werte im Cache zu speichern, auszulesen oder zu loeschen. Unterstuetzt das automatische Entfernen abgelaufener
  * Eintraege und die kapazitaetsbasierte Eviktion (am wenigsten kuerzlich abgelaufene Eintraege), wenn der Cache seine Grenze ueberschreitet.
  *
  * @param {UseCacheConfig} config - Optionale Konfiguration, um TTL und Cache-Kapazitaet anzupassen.
  *   - ttlMs: Time-to-Live fuer Cache-Eintraege in Millisekunden (Standard ist 5 Minuten).
  *   - capacity: Maximale Anzahl von Eintraegen, die im Cache gespeichert werden koennen (Standard ist 100).
  *
- * @returns {Cache<K, V>} Ein Objekt mit den Methoden `get` und `set`, um mit dem Cache zu interagieren.
+ * @returns {Cache<K, V>} Ein Objekt mit den Methoden `get`, `set`, `clear`, um mit dem Cache zu interagieren.
+ *   - `get(key: K): V | undefined`: Ruft den zwischengespeicherten Wert für den angegebenen Schlüssel ab. Wenn der Eintrag nicht existiert oder abgelaufen ist, wird `undefined` zurückgegeben.
+ *   - `set(key: K, value: V): void`: Speichert den angegebenen Wert im Cache mit dem angegebenen Schlüssel.
+ *   - `clear(): void`: Loescht alle Eintraege im Cache.
+ *
+ * @usage
+ * ```tsx
+ * const cache = useCache<string, string>();
+ * cache.set('key', 'value');
+ * cache.get('key', 'value');
+ * cache.clear();
+ * ```
  */
-```
+````
 
 # `useCache` Hook
 
@@ -30,9 +41,10 @@ Ein benutzerdefinierter Hook, der Caching im Arbeitsspeicher mit automatischer A
 
 ## Rückgabewert:
 
-- Ein Objekt mit zwei Methoden:
+- Ein Objekt mit drei Methoden:
     - `get(key: K): V | undefined`: Ruft den zwischengespeicherten Wert für den angegebenen Schlüssel ab. Wenn der Eintrag nicht existiert oder abgelaufen ist, wird `undefined` zurückgegeben.
     - `set(key: K, value: V): void`: Speichert den angegebenen Wert im Cache mit dem angegebenen Schlüssel.
+    - `clear(): void`: Löscht alle Eintraege im Cache.
 
 ## Beispielnutzung:
 
@@ -44,13 +56,18 @@ const MyComponent = () => {
     });
 
     // Wert im Cache speichern
-    cache.set("myKey", "some value");
+    cache.set('key', 'value');
 
     // Wert aus dem Cache abrufen
-    const cachedValue = cache.get("myKey");
+    let cachedValue = cache.get('key');
     if (cachedValue) {
-        console.log(cachedValue); // Ausgabe: 'some value'
+        console.log(cachedValue); // Ausgabe: 'value'
     }
+
+    // Werte aus dem Cache löschen
+    cache.clear();
+    cachedValue = cache.get('key');
+    console.log(Boolean(cachedValue)); // Ausgabe: false
 };
 ```
 

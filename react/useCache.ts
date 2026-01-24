@@ -8,6 +8,7 @@ export interface UseCacheConfig {
 export interface Cache<K, V> {
   get: (key: K) => V | undefined;
   set: (key: K, value: V) => void;
+  clear: () => void;
 }
 
 type CacheEntry<V> = {
@@ -17,15 +18,26 @@ type CacheEntry<V> = {
 
 /**
  * Custom hook for managing in-memory cache with TTL (time-to-live) and capacity management.
- * 
- * Provides `get` and `set` methods to cache values. Supports automatic eviction of expired 
+ *
+ * Provides `get`, `set` and clear methods to retrieve, save or clear values of the cache. Supports automatic eviction of expired 
  * entries and capacity-based eviction (least recently expired) when the cache exceeds its limit.
  *
  * @param {UseCacheConfig} config - Optional configuration to customize TTL and cache capacity.
  *   - ttlMs: Time-to-live for cache entries in milliseconds (default is 5 minutes).
  *   - capacity: Maximum number of entries to store in the cache (default is 100).
- * 
- * @returns {Cache<K, V>} An object with `get` and `set` methods to interact with the cache.
+ *
+ * @returns {Cache<K, V>} An object with `get`, `set` and `clear` methods to interact with the cache.
+ *   - `get(key: K): V | undefined`: Retrieves the cached value for the provided key. If the entry does not exist or has expired, it returns `undefined`.
+ *   - `set(key: K, value: V): void`: Stores the given value in the cache with the specified key.
+ *   - `clear(): void`: Deletes all entries of the cache.
+ *
+ * @usage
+ * ```tsx
+ * const cache = useCache<string, string>();
+ * cache.set('key', 'value');
+ * cache.get('key', 'value');
+ * cache.clear();
+ * ```
  */
 export function useCache<K, V>({
   ttlMs = 5 * 60 * 1000, // 5 minutes default TTL
@@ -99,8 +111,13 @@ export function useCache<K, V>({
     cache.set(cacheKey, cacheEntry);
   };
 
+  const clear = (): void => {
+    cacheRef.current.clear();
+  }
+
   return {
     get,
-    set
+    set,
+    clear
   };
 }
